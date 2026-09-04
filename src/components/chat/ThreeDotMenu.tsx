@@ -13,20 +13,36 @@ import {
 } from 'lucide-react';
 
 interface ThreeDotMenuProps {
-  onNewDrama: () => void;
-  onClearChat: () => void;
-  onOpenMembers: () => void;
-  onOpenVerdict: () => void;
-  onOpenAbout: () => void;
+  onNewDrama?: () => void;
+  onNewCase?: () => void;
+  onClearChat?: () => void;
+  onOpenMembers?: () => void;
+  onOpenVerdict?: () => void;
+  onOpenAbout?: () => void;
+  onOpenRules?: () => void;
+  onOpenInfo?: () => void;
+  onOpenHistory?: () => void;
+  onClearHistory?: () => void;
+  onToggleVoiceNotes?: () => void;
+  onDemoMode?: () => void;
+  voiceNotesEnabled?: boolean;
   hasVerdict?: boolean;
 }
 
 export const ThreeDotMenu: React.FC<ThreeDotMenuProps> = ({
   onNewDrama,
+  onNewCase,
   onClearChat,
   onOpenMembers,
   onOpenVerdict,
   onOpenAbout,
+  onOpenRules,
+  onOpenInfo,
+  onOpenHistory,
+  onClearHistory,
+  onToggleVoiceNotes,
+  onDemoMode,
+  voiceNotesEnabled,
   hasVerdict,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -45,47 +61,60 @@ export const ThreeDotMenu: React.FC<ThreeDotMenuProps> = ({
   const menuItems = [
     {
       icon: RefreshCw,
-      label: 'Start New Family Drama',
-      onClick: onNewDrama,
+      label: 'New Family Session',
+      onClick: onNewDrama ?? onNewCase ?? (() => {}),
       color: 'text-ku-tealLight',
       emoji: '🔥',
     },
     {
-      icon: Trash2,
-      label: 'Clear Conversation',
-      onClick: onClearChat,
-      color: 'text-orange-400',
-      emoji: '🧹',
-    },
-    {
       icon: Users,
       label: 'Family Members',
-      onClick: onOpenMembers,
+      onClick: onOpenMembers ?? onOpenInfo ?? (() => {}),
       color: 'text-purple-400',
       emoji: '👥',
     },
     {
+      icon: Clapperboard,
+      label: 'Chat History',
+      onClick: onOpenHistory ?? (() => {}),
+      color: 'text-ku-textMuted',
+      emoji: '🕘',
+    },
+    {
       icon: Scale,
-      label: 'Family Verdict',
-      onClick: onOpenVerdict,
-      color: hasVerdict ? 'text-ku-goldLight' : 'text-ku-textDim',
-      emoji: '⚖️',
-      disabled: !hasVerdict,
+      label: voiceNotesEnabled ? 'Voice Notes On' : 'Voice Notes Off',
+      onClick: onToggleVoiceNotes ?? (() => {}),
+      color: 'text-ku-goldLight',
+      emoji: '🔊',
     },
     {
       icon: Clapperboard,
       label: 'Demo Mode',
-      onClick: () => {},
-      color: 'text-ku-textDim',
-      emoji: '🎬',
-      disabled: true,
+      onClick: onDemoMode ?? (() => {}),
+      color: 'text-ku-tealLight',
+      emoji: '🎭',
+    },
+    {
+      icon: Trash2,
+      label: 'Clear Chat History',
+      onClick: onClearHistory ?? (() => {}),
+      color: 'text-orange-400',
+      emoji: '🧹',
     },
     {
       icon: Info,
       label: 'About Kudumbam Union',
-      onClick: onOpenAbout,
+      onClick: onOpenAbout ?? (() => {}),
       color: 'text-ku-textMuted',
       emoji: 'ℹ️',
+    },
+    {
+      icon: Clapperboard,
+      label: 'Rules & Boundaries',
+      onClick: onOpenRules ?? (() => {}),
+      color: 'text-ku-textDim',
+      emoji: '🎬',
+      disabled: !onOpenRules,
     },
   ];
 

@@ -80,9 +80,6 @@ export const GroupInfoDrawer: React.FC<MemberDrawerProps> = ({ isOpen, onClose }
               <span className="text-[10px] px-2 py-0.5 rounded-full bg-ku-tealMuted text-ku-tealLight font-semibold border border-ku-teal/20">
                 4 members
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-ku-goldMuted text-ku-goldLight font-semibold border border-ku-gold/20">
-                100% Judgement
-              </span>
             </div>
           </div>
 

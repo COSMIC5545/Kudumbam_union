@@ -39,9 +39,46 @@ export interface FamilyVerdictData {
   lathaComment: string;
 }
 
+export interface VisualContext {
+  people: number;
+  visible_people_description: string[];
+  setting: string;
+  objects: string[];
+  activities: string[];
+  food_or_drink: string[];
+  notable_details: string[];
+  relationship_unknown: boolean;
+  social_context: string;
+  gossip_potential: number;
+}
+
+export interface FamilyConversationTurn {
+  speaker: PersonaId;
+  message: string;
+  messageType?: 'text' | 'voice_note' | 'reaction';
+  replyTo?: string | null;
+  emotion?: string;
+  continueConversation: boolean;
+  isVerdict?: boolean;
+  verdict?: FamilyVerdictData;
+}
+
+export interface FamilySessionRecord {
+  id: string;
+  createdAt: string;
+  caption?: string;
+  imageUrl?: string;
+  imageDataUrl?: string;
+  visualContext?: VisualContext | null;
+  messages: Message[];
+  members: PersonaId[];
+  finalVerdict?: FamilyVerdictData | null;
+  description?: string;
+}
+
 export interface Message {
   id: string;
-  senderId: PersonaId | 'user';
+  senderId: PersonaId | 'user' | 'system';
   senderName: string;
   senderAvatar?: string;
   roleBadge?: string;
@@ -59,4 +96,4 @@ export interface Message {
   isSystem?: boolean;
 }
 
-export type ChatStatus = 'idle' | 'uploading' | 'analyzing' | 'chatted' | 'verdict_ready';
+export type ChatStatus = 'idle' | 'uploading' | 'analyzing' | 'responding' | 'ready' | 'error';

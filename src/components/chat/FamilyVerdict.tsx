@@ -52,8 +52,8 @@ export const FamilyVerdict: React.FC<FamilyVerdictProps> = ({ verdict }) => {
         {/* Persona Verdict Highlights Grid */}
         <div className="space-y-2 text-xs">
           <div className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200/70 dark:border-rose-900/50">
-            <strong className="text-rose-700 dark:text-rose-300">Meera (Amma 🤱): </strong>
-            <span className="italic">"{verdict.meeraComment}"</span>
+            <strong className="text-rose-700 dark:text-rose-300">Sheela (Amma 🤱): </strong>
+            <span className="italic">"{verdict.sheelaComment}"</span>
           </div>
 
           <div className="p-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200/70 dark:border-purple-900/50">

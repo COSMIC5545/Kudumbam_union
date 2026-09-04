@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface LoadingScreenProps {
@@ -16,8 +16,16 @@ const LOADING_STEPS = [
 
 export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
   const [stepIndex, setStepIndex] = useState(0);
+  const onCompleteRef = useRef(onComplete);
 
   useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
+
+  useEffect(() => {
+    let cancelled = false;
+    let completed = false;
+
     const interval = setInterval(() => {
       setStepIndex((prev) => {
         if (prev >= LOADING_STEPS.length - 1) return prev;
@@ -26,14 +34,17 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
     }, 600);
 
     const timer = setTimeout(() => {
-      onComplete();
+      if (cancelled || completed) return;
+      completed = true;
+      onCompleteRef.current();
     }, 2800);
 
     return () => {
+      cancelled = true;
       clearInterval(interval);
       clearTimeout(timer);
     };
-  }, [onComplete]);
+  }, []);
 
   return (
     <motion.div
