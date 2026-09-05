@@ -2,98 +2,105 @@
 
 
 
-# [Project Name] 🎯
+# [Kudumbam Union] 🎯
 
 
 ## Basic Details
-### Team Name: [Name]
+### Team Name: [S2S]
 
 
 ### Team Members
-- Team Lead: [Name] - [College]
-- Member 2: [Name] - [College]
-- Member 3: [Name] - [College]
+- Team Lead: [Sreehari V Nair] - [Jain University Kochi]
+- Member 2: [Sreehari S Kartha] - [Jain University Kochi]
+
 
 ### Project Description
-[2-3 lines about what your project does]
+[Kudumbam Union is an AI-powered Kerala family group chat simulator where users can send messages or upload photos and receive funny, context-aware reactions from different family members. Each character has a unique personality, conversation style, and voice, turning ordinary moments into chaotic family discussions.]
 
 ### The Problem (that doesn't exist)
-[What ridiculous problem are you solving?]
+[Traditional chatbots lack the spontaneity and social chaos of real family group chats. Kudumbam Union aims to simulate a dynamic Kerala family conversation where messages and photos trigger personalized, context-aware reactions from different family members.]
 
 ### The Solution (that nobody asked for)
-[How are you solving it? Keep it fun!]
+[Kudumbam Union uses AI-powered image understanding and conversation context to generate dynamic, personalized family reactions based on each member’s unique personality. It combines contextual chat with character-specific AI voices to create a realistic and entertaining Kerala family group-chat experience.]
 
 ## Technical Details
 ### Technologies/Components Used
 For Software:
-- [Languages used]
-- [Frameworks used]
-- [Libraries used]
-- [Tools used]
-
-For Hardware:
-- [List main components]
-- [List specifications]
-- [List tools required]
+Frontend: Next.js, TypeScript, Tailwind CSS, Framer Motion
+AI & Vision: OpenAI API
+Voice Generation: ElevenLabs TTS
+UI Icons: Lucide React
+Backend: Next.js API Routes
+Storage: Browser LocalStorage
+Version Control: Git & GitHub
 
 ### Implementation
 For Software:
 # Installation
-[commands]
+[npm install]
 
 # Run
-[commands]
+[npm run dev]
 
 ### Project Documentation
 For Software:
 
 # Screenshots (Add at least 3)
-![Screenshot1](Add screenshot 1 here with proper name)
-*Add caption explaining what this shows*
+<img width="881" height="445" alt="Screenshot 2026-09-05 035200" src="https://github.com/user-attachments/assets/c9560113-8f80-4945-ae48-6075f2ac8764" />
+
 
 ![Screenshot2](Add screenshot 2 here with proper name)
-*Add caption explaining what this shows*
+<img width="679" height="446" alt="Screenshot 2026-09-05 054526" src="https://github.com/user-attachments/assets/c6b831f8-9414-4426-baa1-2b0b0412ed1b" />
+
 
 ![Screenshot3](Add screenshot 3 here with proper name)
-*Add caption explaining what this shows*
+<img width="664" height="475" alt="Screenshot 2026-09-05 054513" src="https://github.com/user-attachments/assets/9cd049a1-61d7-49b0-9caa-75738a77fc40" />
+
 
 # Diagrams
-![Workflow](Add your workflow/architecture diagram here)
-*Add caption explaining your workflow*
+┌───────────────┐
+        │ User Message  │
+        │ / Upload Photo│
+        └───────┬───────┘
+                ↓
+       ┌─────────────────┐
+       │ AI Vision +     │
+       │ Context Analysis│
+       └───────┬─────────┘
+               ↓
+      ┌──────────────────┐
+      │ Family Brain /   │
+      │ AI Orchestrator  │
+      └────────┬─────────┘
+               ↓
+   ┌───────────┼───────────┐
+   ↓           ↓           ↓
+┌───────┐  ┌────────┐  ┌────────┐
+│ Amma │  │ Sister │  │ Aunty  │
+└───┬───┘  └───┬────┘  └───┬────┘
+    └──────────┼───────────┘
+               ↓
+      ┌─────────────────┐
+      │ Dynamic Family  │
+      │ Conversation    │
+      └────────┬────────┘
+               ↓
+      ┌─────────────────┐
+      │ Text + Voice    │
+      │ Reactions       │
+      └────────┬────────┘
+               ↓
+      ┌─────────────────┐
+      │ Family Verdict™ │
+      └─────────────────┘
 
-For Hardware:
-
-# Schematic & Circuit
-![Circuit](Add your circuit diagram here)
-*Add caption explaining connections*
-
-![Schematic](Add your schematic diagram here)
-*Add caption explaining the schematic*
-
-# Build Photos
-![Components](Add photo of your components here)
-*List out all components shown*
-
-![Build](Add photos of build process here)
-*Explain the build steps*
-
-![Final](Add photo of final product here)
-*Explain the final build*
 
 ### Project Demo
 # Video
-[Add your demo video link here]
-*Explain what the video demonstrates*
+https://drive.google.com/file/d/1PIdv8g-bQH9lHIKJR8Jj2COzuKEJjViP/view?usp=sharing
 
-# Additional Demos
-[Add any extra demo materials/links]
 
-## Team Contributions
-- [Name 1]: [Specific contributions]
-- [Name 2]: [Specific contributions]
-- [Name 3]: [Specific contributions]
 
----
 Made with ❤️ at TinkerHub Useless Projects 
 
 ![Static Badge](https://img.shields.io/badge/TinkerHub-24?color=%23000000&link=https%3A%2F%2Fwww.tinkerhub.org%2F)
