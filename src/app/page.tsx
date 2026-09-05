@@ -35,6 +35,61 @@ const buildSessionDescription = (caption?: string, messageCount = 0) => {
   return 'Fresh family session';
 };
 
+const buildCurrentConversationContext = ({
+  latestUserMessage,
+  recentMessages,
+  activeImageUrl,
+  activeImageAnalysis,
+}: {
+  latestUserMessage: string;
+  recentMessages: Message[];
+  activeImageUrl?: string | null;
+  activeImageAnalysis?: VisualContext | null;
+}) => {
+  const normalizedLatest = latestUserMessage.trim();
+  const recentText = recentMessages
+    .filter((message) => message.content?.trim())
+    .slice(-8)
+    .map((message) => `${message.senderId}: ${message.content}`)
+    .join(' ');
+
+  const greeting = /(hi|hello|hey|hii|namaskaram|vanakkam|good morning|good evening|how is everyone|how are you all)/i.test(normalizedLatest);
+  const question = /(what|why|how|when|where|who|are you|is it|did|do you|can you)/i.test(normalizedLatest) || normalizedLatest.includes('?');
+  const photoReference = /(photo|picture|image|pic|look at this|see this|this pic|this photo|in the photo|in this picture|why are you not responding to the pic|why are you not responding)/i.test(normalizedLatest);
+  const topicChange = /(btw|by the way|anyway|also|now|today|tomorrow|exam|school|college|work|job|travel|movie|party|doctor|appointment)/i.test(normalizedLatest);
+  const relatedToImage = !!activeImageAnalysis && (photoReference || /(look|see|this|that|picture|photo|image)/i.test(normalizedLatest));
+
+  return {
+    latestUserMessage: normalizedLatest,
+    recentMessages: recentMessages.slice(-8),
+    currentTopic: greeting
+      ? 'greeting'
+      : relatedToImage
+        ? 'photo_discussion'
+        : topicChange
+          ? 'topic_change'
+          : question
+            ? 'question'
+            : 'general_chat',
+    userIntent: greeting
+      ? 'greeting'
+      : relatedToImage
+        ? 'photo_discussion'
+        : topicChange
+          ? 'topic_change'
+          : question
+            ? 'question'
+            : 'general_chat',
+    activeImage: activeImageUrl ? { imageUrl: activeImageUrl, analysis: activeImageAnalysis ?? null } : null,
+    activeImageAnalysis: activeImageAnalysis ?? null,
+    imageRelevant: relatedToImage,
+    topicChanged: !!recentMessages.length && (greeting || topicChange || photoReference),
+    unresolvedQuestions: recentMessages.filter((message) => typeof message.content === 'string' && /\?$/.test(message.content.trim())).map((message) => message.content.trim()),
+    recentSpeakers: Array.from(new Set(recentMessages.filter((message) => message.senderId !== 'user' && message.senderId !== 'system').map((message) => message.senderId as PersonaId))),
+    recentTopics: recentText,
+  };
+};
+
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -166,25 +221,34 @@ export default function Home() {
           status: 'sent',
         };
 
+        setVisualContext(null);
+        visualContextRef.current = null;
         setChatStatus('responding');
         setErrorMessage(null);
         appendMessage(userMsg);
         saveSessionToHistory(sessionId, userMessageText, userUploadedPhoto || undefined, null);
 
         let previousSpeaker: PersonaId | null = null;
-        const conversationMessages = [...messagesRef.current];
+        const conversationMessages = [...messagesRef.current, userMsg];
+        const conversationContext = buildCurrentConversationContext({
+          latestUserMessage: userMessageText,
+          recentMessages: conversationMessages,
+          activeImageUrl: userUploadedPhoto,
+          activeImageAnalysis: visualContextRef.current,
+        });
 
-        for (let turn = 0; turn < 4; turn += 1) {
+        for (let turn = 0; turn < 3; turn += 1) {
           const response = await fetch('/api/family', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               action: 'next-turn',
               userMessage: userMessageText,
-              caption: userMessageText,
-              visualContext: visualContextRef.current,
+              caption: '',
+              visualContext: conversationContext.imageRelevant ? visualContextRef.current : null,
               conversationHistory: conversationMessages,
               previousSpeaker,
+              conversationContext,
             }),
           });
 
@@ -204,6 +268,8 @@ export default function Home() {
           await sleep(500 + (speaker === 'soman' ? 600 : speaker === 'latha' ? 400 : 300));
           setTypingPersonaId(null);
 
+          const shouldUseVoiceNote = voiceNotesEnabled && speaker !== 'soman' && turn === 0 && responseText.length > 30;
+
           const familyMessage: Message = {
             id: `family-${speaker}-${Date.now()}-${turn}`,
             senderId: speaker,
@@ -211,8 +277,8 @@ export default function Home() {
             content: responseText,
             timestamp: getTimeStamp(),
             status: 'read',
-            isVoiceNote: voiceNotesEnabled && (speaker === 'soman' || speaker === 'latha' || speaker === 'sheela') && turn % 2 === 0,
-            voiceNoteData: voiceNotesEnabled && (speaker === 'soman' || speaker === 'latha' || speaker === 'sheela') && turn % 2 === 0
+            isVoiceNote: shouldUseVoiceNote,
+            voiceNoteData: shouldUseVoiceNote
               ? {
                   durationSeconds: 18,
                   transcription: responseText,
@@ -296,8 +362,14 @@ export default function Home() {
 
         const conversationMessages: Message[] = [...messagesRef.current];
         let previousSpeaker: PersonaId | null = null;
+        const photoConversationContext = buildCurrentConversationContext({
+          latestUserMessage: caption || 'look at this photo',
+          recentMessages: conversationMessages,
+          activeImageUrl: previewUrl,
+          activeImageAnalysis: context,
+        });
 
-        for (let turn = 0; turn < 6; turn += 1) {
+        for (let turn = 0; turn < 4; turn += 1) {
           setChatStatus('responding');
           const response = await fetch('/api/family', {
             method: 'POST',
@@ -306,9 +378,10 @@ export default function Home() {
               action: 'next-turn',
               imageUrl: imagePayload,
               caption,
-              visualContext: context,
+              visualContext: photoConversationContext.imageRelevant ? context : null,
               conversationHistory: conversationMessages,
               previousSpeaker,
+              conversationContext: photoConversationContext,
             }),
           });
 
@@ -328,6 +401,8 @@ export default function Home() {
           await sleep(700 + (speaker === 'soman' ? 500 : 250));
           setTypingPersonaId(null);
 
+          const shouldUseVoiceNote = voiceNotesEnabled && speaker !== 'soman' && turn === 0 && text.length > 30;
+
           const familyMessage: Message = {
             id: `family-${speaker}-${Date.now()}-${turn}`,
             senderId: speaker,
@@ -335,8 +410,8 @@ export default function Home() {
             content: text,
             timestamp: getTimeStamp(),
             status: 'read',
-            isVoiceNote: voiceNotesEnabled && (speaker === 'soman' || speaker === 'latha' || speaker === 'sheela') && turn % 2 === 0,
-            voiceNoteData: voiceNotesEnabled && (speaker === 'soman' || speaker === 'latha' || speaker === 'sheela') && turn % 2 === 0
+            isVoiceNote: shouldUseVoiceNote,
+            voiceNoteData: shouldUseVoiceNote
               ? {
                   durationSeconds: 18,
                   transcription: text,
